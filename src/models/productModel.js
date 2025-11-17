@@ -20,14 +20,14 @@ const createProduct = async (
 
 const getAllProducts = async () => {
   const result = await pool.query(
-    "SELECT * FROM products ORDER BY created_at DESC"
+    "SELECT id, name, description, price, stock, category, image_url, created_at FROM products ORDER BY created_at DESC"
   );
   if (result.rows.length === 0) return [];
   return result.rows;
 };
 
 const getProductById = async (id) => {
-  const result = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
+  const result = await pool.query("SELECT id, name, description, price, stock, category, image_url, created_at FROM products WHERE id = $1", [id]);
   return result.rows[0];
 };
 

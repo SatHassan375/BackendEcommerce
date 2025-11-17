@@ -28,7 +28,7 @@ const register = async (req, res) => {
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1d",
+        expiresIn: "7d",
       }
     );
     res.status(201).json({ token, user: newUser });
@@ -52,7 +52,7 @@ const login = async (req, res) => {
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1d",
+        expiresIn: "7d",
       }
     );
 

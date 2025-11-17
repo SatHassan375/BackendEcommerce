@@ -10,17 +10,19 @@ const createUser = async (name, email, hashedPassword) => {
 };
 
 const findUserByEmail = async (email) => {
-  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+  const result = await pool.query("SELECT id, name, email, role, created_at FROM users WHERE email = $1", [
     email,
   ]);
   return result.rows[0];
 };
 const getAllUsers = async () => {
-  const result = await pool.query("SELECT * FROM users");
+  const result = await pool.query(
+    "SELECT id, name, email, role, created_at FROM users"
+  );
   return result;
 };
 const getUserById = async (id) => {
-  const result = await pool.query("SELECT * FROM users where id = $1", [id]);
+  const result = await pool.query("SELECT id, name, email, role, created_at FROM users where id = $1", [id]);
   return result;
 };
 const changeUserPasswordById = async (id, hashedPassword) => {
