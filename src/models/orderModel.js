@@ -46,15 +46,24 @@ const createOrder = async (userId, addressId, items, totalAmount) => {
 
 // Get all orders for a user
 const getUserOrders = async (userId) => {
-  const query = `select od.id ,oi.quantity,oi.price,od.status,
-  adrs.full_name,adrs.phone,adrs.address_line1,adrs.address_line2,
-  adrs.city,adrs.state,adrs.postal_code,adrs.country,adrs.is_default,
-  pd.id as product_id,pd.name as product_name,pd.description,pd.category,image_url,
-  od.created_at,od.updated_at
-  from orders as od 
-  left join order_items as oi on oi.order_id = od.id
-  left join products as pd on pd.id = oi.product_id
-  left join addresses as adrs on adrs.id = od.address_id where od.user_id = $1`;
+  let query = "";
+  if (userId) {
+    query = `select od.id ,oi.quantity,oi.price,od.status,
+             adrs.full_name,adrs.phone,adrs.address_line1,adrs.address_line2,
+             adrs.city,adrs.state,adrs.postal_code,adrs.country,adrs.is_default,
+             pd.id as product_id,pd.name as product_name,pd.description,pd.category,image_url,
+             od.created_at,od.updated_at
+             from orders as od 
+             left join order_items as oi on oi.order_id = od.id
+             left join products as pd on pd.id = oi.product_id
+             left join addresses as adrs on adrs.id = od.address_id where od.user_id = $1`;
+  } else {
+    query = `select odr.id as order_id,odr.user_id,odr.total_amount,odr.status as order_status,odr.payment_status,odr_i.id as order_item_id,
+              odr_i.product_id,odr_i.quantity,odr_i.price as item_price,py.id as payment_id,py.method as payment_method
+              from orders as odr
+              left join order_items as odr_i on odr.id = odr_i.order_id
+              left join payments as py on py.order_id = odr.id `;
+  }
 
   const result = await pool.query(query, [userId]);
   return result.rows;

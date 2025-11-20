@@ -38,7 +38,8 @@ const createOrder = async (req, res) => {
 // Get all orders of a user
 const getUserOrders = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const role = req.user.role;
+    const userId = role === "admin" ? null : req.user.id;
     const orders = await ordersModel.getUserOrders(userId);
     res.status(200).json(orders);
   } catch (error) {
