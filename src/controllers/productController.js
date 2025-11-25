@@ -7,6 +7,7 @@ const {
   deleteProduct,
   getAllCategories,
   search,
+  createProductCategory,
 } = require("../models/productModel");
 
 const addProduct = async (req, res) => {
@@ -21,6 +22,22 @@ const addProduct = async (req, res) => {
       image_url
     );
     res.status(201).json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+const addCategory = async (req, res) => {
+  try {
+    const { category_name, description } = req.body;
+    if (category_name) {
+      return res.status(201).json({
+        message: "Category already exists",
+        category_name,
+        description,
+      });
+    }
+    const category = await createProductCategory(name, description);
+    res.status(201).json(category);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -94,4 +111,5 @@ module.exports = {
   removeProduct,
   searchProducts,
   fetchAllCategories,
+  addCategory,
 };
