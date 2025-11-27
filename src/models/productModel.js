@@ -17,12 +17,12 @@ const createProduct = async (
   );
   return result.rows[0];
 };
-const createProductCategory = async (name, description) => {
+const createProductCategory = async (name, slug, parent_id) => {
   const result = await pool.query(
-    `INSERT INTO productCateogory (name, description) 
-     VALUES ($1, $2) 
+    `INSERT INTO categories (name, slug, parent_id) 
+     VALUES ($1, $2, $3) 
      RETURNING *`,
-    [name, description]
+    [name, slug, parent_id]
   );
   return result.rows[0];
 };
@@ -70,7 +70,7 @@ const deleteProduct = async (id) => {
 const search = async (filters) => {
   const {
     query,
-    category,
+    category_id,
     min_price,
     max_price,
     min_stock,
@@ -93,9 +93,9 @@ const search = async (filters) => {
     i++;
   }
 
-  if (category) {
-    where.push(`category = $${i}`);
-    params.push(category);
+  if (category_id) {
+    where.push(`category_id = $${i}`);
+    params.push(category_id);
     i++;
   }
 
@@ -131,12 +131,14 @@ const search = async (filters) => {
     ORDER BY ${sort_by} ${sort_order} ${limit ?? `LIMIT ${limit}`}
     OFFSET ${offset}
   `;
+  console.log(sql);
+  console.log(params);
   const result = await pool.query(sql, params);
   return result.rows;
 };
 const getAllCategories = async () => {
   const result = await pool.query(
-    "SELECT MIN(id) AS id, category FROM products GROUP BY category"
+    "SELECT id,name,slug,parent_id,created_at,updated_at FROM categories"
   );
   return result.rows;
 };

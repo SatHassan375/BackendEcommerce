@@ -28,15 +28,8 @@ const addProduct = async (req, res) => {
 };
 const addCategory = async (req, res) => {
   try {
-    const { category_name, description } = req.body;
-    if (category_name) {
-      return res.status(201).json({
-        message: "Category already exists",
-        category_name,
-        description,
-      });
-    }
-    const category = await createProductCategory(name, description);
+    const { name, slug, parent_id } = req.body;
+    const category = await createProductCategory(name, slug, parent_id);
     res.status(201).json(category);
   } catch (err) {
     res.status(500).json({ error: err.message });
