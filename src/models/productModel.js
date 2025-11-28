@@ -142,6 +142,29 @@ const getAllCategories = async () => {
   );
   return result.rows;
 };
+const deleteCategory = async (id) => {
+  const result = await pool.query(
+    "DELETE FROM categories WHERE id = $1 RETURNING *",
+    [id]
+  );
+  return result.rows[0];
+};
+const updateCategory = async (id, fields) => {
+  const keys = Object.keys(fields);
+  const values = Object.values(fields);
+
+  if (keys.length === 0) return null;
+
+  const setClause = keys
+    .map((key, index) => `${key} = $${index + 1}`)
+    .join(", ");
+  const query = `UPDATE categories SET ${setClause} WHERE id = $${
+    keys.length + 1
+  } RETURNING *`;
+
+  const result = await pool.query(query, [...values, id]);
+  return result.rows[0];
+};
 module.exports = {
   createProduct,
   getAllProducts,
@@ -151,4 +174,6 @@ module.exports = {
   search,
   getAllCategories,
   createProductCategory,
+  deleteCategory,
+  updateCategory,
 };
