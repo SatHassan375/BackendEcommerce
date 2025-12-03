@@ -29,7 +29,7 @@ const createProductCategory = async (name, slug, parent_id) => {
 
 const getAllProducts = async () => {
   const result = await pool.query(
-    "SELECT id, name, description, price, stock, category, image_url, created_at FROM products ORDER BY created_at DESC"
+    "SELECT pd.id, pd.name, pd.description, pd.price, pd.stock, ct.name as category, pd.image_url, pd.created_at FROM products as pd left join categories as ct on pd.category_id = ct.id ORDER BY created_at DESC"
   );
   if (result.rows.length === 0) return [];
   return result.rows;
