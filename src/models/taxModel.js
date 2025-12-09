@@ -19,13 +19,13 @@ const createTax = async (
 };
 
 const getTaxById = async (id) => {
-  const result = await pool.query("SELECT * FROM tax WHERE id = $1", [id]);
+  const result = await pool.query("SELECT * FROM tax WHERE tax_id = $1", [id]);
   return result.rows[0];
 };
 
 const getAllTaxes = async () => {
   const result = await pool.query(
-    "SELECT tax_name, tax_rate, tax_type, country_code, state_code, is_active FROM tax"
+    "SELECT tax_id ,tax_name, tax_rate, tax_type, country_code, state_code, is_active FROM tax"
   );
   return result.rows;
 };
@@ -39,7 +39,7 @@ const updateTax = async (id, fields) => {
   const setClause = keys
     .map((key, index) => `${key} = $${index + 1}`)
     .join(", ");
-  const query = `UPDATE tax SET ${setClause} WHERE id = $${
+  const query = `UPDATE tax SET ${setClause} WHERE tax_id = $${
     keys.length + 1
   } RETURNING *`;
 
@@ -48,9 +48,10 @@ const updateTax = async (id, fields) => {
 };
 
 const deleteTax = async (id) => {
-  const result = await pool.query("DELETE FROM tax WHERE id = $1 RETURNING *", [
-    id,
-  ]);
+  const result = await pool.query(
+    "DELETE FROM tax WHERE tax_id = $1 RETURNING *",
+    [id]
+  );
   return result.rows[0];
 };
 
